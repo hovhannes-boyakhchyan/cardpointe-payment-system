@@ -1,0 +1,68 @@
+import { YesNoEnum } from '../../../enums';
+
+export class CapturePaymentDto {
+  merchid: string;
+  retref: string;
+  account: string;
+  amount?: number;
+  capture?: YesNoEnum;
+  tokenize?: YesNoEnum;
+  authcode?: string;
+  expiry?: string;
+  orderid?: string;
+  postal?: string;
+  cvv2?: string;
+  receipt?: YesNoEnum;
+  invoiceid?: string;
+  ecomind?: string;
+  cof?: string;
+  cofpermission?: YesNoEnum;
+  cofscheduled?: YesNoEnum;
+  currency?: string;
+  bankaba?: string;
+  track?: string;
+  bin?: YesNoEnum;
+  profile?: YesNoEnum;
+  auoptout?: YesNoEnum;
+  signature?: string;
+  name?: string;
+  company?: string;
+  address?: string;
+  address2?: string;
+  city?: string;
+  region?: string;
+  country?: string;
+  phone?: string;
+  email?: string;
+  taxexempt?: YesNoEnum;
+  termid?: string;
+  accttype?: string;
+  userfields?: {
+    [name: string]: string;
+  }[];
+  ponumber?: string;
+  taxamnt?: number;
+  frtamnt?: number;
+  dutyamnt?: number;
+  orderdate?: number;
+  shiptozip?: number;
+  shipfromzip?: number;
+  shiptocountry?: string;
+  items?: {
+    description: string;
+    discamnt: number;
+    lineno: number;
+    material: string;
+    netamnt: number;
+    quantity: number;
+    taxamnt: number;
+    taxexempt: YesNoEnum;
+    unitcost: string;
+    uom: string;
+    upc: string;
+  }[];
+  securedstid?: string;
+  secureexemption?: string;
+  secureflag?: string;
+  securevalue?: string;
+}

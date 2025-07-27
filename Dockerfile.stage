@@ -1,0 +1,41 @@
+# ---------- Base ----------
+FROM node:18-alpine AS base
+
+WORKDIR /app
+ENV PATH /app/node_modules/.bin:/app/node_modules/@babel/cli/bin:$PATH
+# ---------- Builder ----------
+# Creates:
+# - node_modules: production dependencies (no dev dependencies)
+# - dist: A production build compiled with Babel
+COPY package*.json ./
+#### RUN npx browserslist@latest --update-db
+RUN npm install --only=development
+COPY . .
+RUN npm run build
+
+#####
+FROM node:18-alpine as production
+
+ARG NODE_ENV=stage
+ENV NODE_ENV=${NODE_ENV}
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install --only=production
+
+COPY . .
+
+# ---------- Release ----------
+FROM production AS release
+
+ENV PATH /app/node_modules/.bin:$PATH
+
+
+ARG NODE_ENV=stage
+ENV NODE_ENV=${NODE_ENV}
+
+COPY --from=base /app/dist ./dist
+EXPOSE ${PORT}
+CMD ["node", "./dist/main.js"]

@@ -1,0 +1,37 @@
+#  Docker-push pipeline
+
+image: atlassian/default-image:3
+
+pipelines:
+  pull-requests:
+    '**': #this runs as default for any branch
+      - step:
+          name: Lint project.
+          script:
+            - npm i
+            - npm run lint
+  branches:
+    pos:
+      - step:
+          name: Build and Test
+          runs-on:
+            - self.hosted
+          script:
+            - IMAGE_NAME=$(node -p "require('./package.json').name")
+            - docker build  --build-arg NPM_TOKEN=${NPM_TOKEN} . --file Dockerfile -t ordersgrid/${IMAGE_NAME}_stage:latest
+            - docker login --username ${DOCKERHUB_USERNAME} --password ${DOCKERHUB_PASSWORD}
+            - docker push ordersgrid/${IMAGE_NAME}_stage:latest
+          services:
+            - docker
+      - step:
+          name: Deploy
+          runs-on:
+            - self.hosted
+          deployment: production
+          script:
+          - pipe: atlassian/ssh-run:0.2.2
+            variables:
+              SSH_USER: $POS_SERVER_USER
+              SERVER: $POS_SERVER_IP
+              SSH_KEY: $POS_SERVER_SSH_KEY
+              COMMAND: './run.sh cardpointe'
